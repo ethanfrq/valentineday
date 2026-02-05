@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>💘 Valentine ?</title>
+
+  <style>
+    :root{
+      --bg1:#ff4d6d;
+      --bg2:#ff8fab;
+      --card:#ffffffee;
+      --text:#2b2b2b;
+      --yes:#22c55e;
+      --no:#ef4444;
+      --shadow: 0 20px 60px rgba(0,0,0,.18);
+      --radius: 22px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100dvh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      display:grid;
+      place-items:center;
+      padding:24px;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(255,255,255,.25), transparent 55%),
+        radial-gradient(900px 500px at 90% 30%, rgba(255,255,255,.18), transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+
+    /* petits cœurs décoratifs */
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.25;
+      filter: blur(.2px);
+    }
+    .heart{
+      position:absolute;
+      font-size:clamp(14px, 2.5vw, 26px);
+      animation: floaty linear infinite;
+      transform: translateY(110vh);
+    }
+    @keyframes floaty{
+      0% { transform: translateY(110vh) translateX(0) rotate(0deg); }
+      100% { transform: translateY(-20vh) translateX(40px) rotate(18deg); }
+    }
+
+    .card{
+      width:min(560px, 92vw);
+      background:var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3.5vw, 28px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      padding:10px 14px;
+      border-radius: 999px;
+      background: rgba(255,77,109,.12);
+      color:#b4233a;
+      border: 1px solid rgba(255,77,109,.25);
+    }
+
+    h1{
+      margin:14px 0 6px;
+      font-size: clamp(22px, 4.2vw, 34px);
+      line-height:1.1;
+      letter-spacing:-.02em;
+    }
+
+    p{
+      margin: 0 0 18px;
+      opacity:.85;
+      font-size: clamp(14px, 2.3vw, 16px);
+    }
+
+    .btn-area{
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(0,0,0,.07);
+      position:relative;
+      height: 130px; /* zone dans laquelle le bouton "non" peut bouger */
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-weight:800;
+      font-size: 16px;
+      user-select:none;
+      transition: transform .15s ease, filter .15s ease, background .15s ease, box-shadow .15s ease;
+      box-shadow: 0 10px 22px rgba(0,0,0,.10);
+      min-width: 150px;
+      touch-action: manipulation;
+    }
+
+    .btn .icon{
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    /* bouton OUI: clignote en vert */
+    .yes{
+      background: linear-gradient(180deg, rgba(34,197,94,.25), rgba(34,197,94,.18));
+      border: 1px solid rgba(34,197,94,.35);
+      color:#0f5132;
+      animation: yesPulse 1s infinite;
+      position:absolute;
+      left: 16px;
+      top: 24px;
+    }
+    @keyframes yesPulse{
+      0%,100% { box-shadow: 0 10px 22px rgba(0,0,0,.10), 0 0 0 0 rgba(34,197,94,.45); }
+      50%     { box-shadow: 0 10px 22px rgba(0,0,0,.10), 0 0 0 10px rgba(34,197,94,.0); }
+    }
+    .yes:hover{
+      transform: translateY(-2px) scale(1.02);
+      filter: brightness(1.05);
+      background: linear-gradient(180deg, rgba(34,197,94,.35), rgba(34,197,94,.22));
+    }
+
+    /* bouton NON (positionné absolument pour pouvoir bouger) */
+    .no{
+      background: linear-gradient(180deg, rgba(239,68,68,.22), rgba(239,68,68,.16));
+      border: 1px solid rgba(239,68,68,.30);
+      color:#7f1d1d;
+      position:absolute;
+      left: 52%;
+      top: 24px;
+    }
+    .no:hover{
+      filter: brightness(1.05);
+      background: linear-gradient(180deg, rgba(239,68,68,.30), rgba(239,68,68,.18));
+    }
+
+    .result{
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255,77,109,.10);
+      border: 1px solid rgba(255,77,109,.22);
+      display:none;
+      font-weight:700;
+    }
+
+    .small{
+      margin-top:10px;
+      opacity:.7;
+      font-size: 12.5px;
+    }
+
+    /* petite vague de déco dans la card */
+    .wave{
+      position:absolute;
+      right:-120px;
+      top:-120px;
+      width:260px;
+      height:260px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,77,109,.35), transparent 60%);
+      transform: rotate(20deg);
+      border-radius: 50%;
+      pointer-events:none;
+    }
+
+    @media (max-width: 420px){
+      .btn{ min-width: 132px; padding: 13px 14px; border-radius: 14px; }
+      .btn-area{ height: 150px; }
+      .yes{ left: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .yes{ animation:none; }
+      .heart{ animation:none; }
+      .btn{ transition:none; }
+    }
+
+    /* Mobile: boutons en colonne + zone plus grande + tailles adaptées */
+    @media (max-width: 520px){
+    body{ padding: 16px; }
+    .card{ width: min(560px, 96vw); }
+
+    .btn-area{
+        height: 190px;               /* plus de place pour bouger */
+    }
+
+    /* on garde du "absolute" mais on agrandit les boutons un peu */
+    .btn{
+        min-width: 0;
+        width: 100%;
+        max-width: 320px;
+    }
+
+    /* place Oui en haut, Non en bas (plus naturel au doigt) */
+    .yes{ left: 50%; transform: translateX(-50%); top: 16px; }
+    .no { left: 50%; transform: translateX(-50%); top: 96px; }
+    }
+
+    /* Empêche les styles hover de "coller" sur mobile */
+    @media (hover: none){
+    .yes:hover, .no:hover{ transform: none; filter: none; }
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="hearts" aria-hidden="true">
+    <!-- quelques cœurs flottants -->
+    <div class="heart" style="left:10%; animation-duration: 10s; animation-delay:-2s;">💗</div>
+    <div class="heart" style="left:22%; animation-duration: 12s; animation-delay:-6s;">💖</div>
+    <div class="heart" style="left:35%; animation-duration: 11s; animation-delay:-4s;">💘</div>
+    <div class="heart" style="left:55%; animation-duration: 14s; animation-delay:-8s;">💞</div>
+    <div class="heart" style="left:72%; animation-duration: 13s; animation-delay:-3s;">💓</div>
+    <div class="heart" style="left:86%; animation-duration: 15s; animation-delay:-10s;">💝</div>
+  </div>
+
+  <main class="card" id="card">
+    <div class="wave"></div>
+    <div class="badge">💌 Question importante</div>
+
+    <h1>Veux-tu être ma St Valentin(e) ?</h1>
+    <p>Promis, il n’y a qu’une bonne réponse… 😇</p>
+
+    <section class="btn-area" id="arena" aria-label="Zone des boutons">
+      <button class="btn yes" id="yesBtn" type="button">
+        <span class="icon">✅</span>
+        Oui !
+      </button>
+
+      <button class="btn no" id="noBtn" type="button">
+        <span class="icon">🙅‍♂️</span>
+        Non
+      </button>
+    </section>
+
+    <div class="result" id="result" role="status" aria-live="polite"></div>
+    <div class="small">PS : Le bouton “Non” est un peu timide…</div>
+  </main>
+
+<script>
+(() => {
+  const arena  = document.getElementById("arena");
+  const noBtn  = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const result = document.getElementById("result");
+
+  let accepted = false;
+
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+  function setNoPos(x, y){
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+  }
+
+  function initNoPos(){
+    const a = arena.getBoundingClientRect();
+    const b = noBtn.getBoundingClientRect();
+
+    // Position de départ différente sur mobile (centré sous le oui)
+    const isMobile = window.matchMedia("(max-width: 520px)").matches;
+
+    const x = Math.round(isMobile ? (a.width * 0.5 - b.width * 0.5) : (a.width * 0.55));
+    const y = Math.round(isMobile ? 96 : 24);
+
+    setNoPos(
+      clamp(x, 8, a.width - b.width - 8),
+      clamp(y, 10, a.height - b.height - 10)
+    );
+  }
+
+  // Fait "s'échapper" le bouton Non quand le curseur / doigt s'approche
+  function dodge(pointerX, pointerY){
+    if (accepted) return;
+
+    const a = arena.getBoundingClientRect();
+    const b = noBtn.getBoundingClientRect();
+
+    const btnCenterX = b.left + b.width/2;
+    const btnCenterY = b.top  + b.height/2;
+
+    const dx = btnCenterX - pointerX;
+    const dy = btnCenterY - pointerY;
+    const dist = Math.hypot(dx, dy);
+
+    // Plus grand sur mobile (doigt)
+    const isMobile = window.matchMedia("(max-width: 520px)").matches;
+    const trigger = isMobile ? 140 : 95;
+
+    if (dist < trigger){
+      const push = (trigger - dist) / trigger; // 0..1
+      const randX = (Math.random() - 0.5) * (isMobile ? 120 : 90);
+      const randY = (Math.random() - 0.5) * (isMobile ? 90  : 70);
+
+      const moveX = (dx / (dist || 1)) * (90 * (0.35 + push)) + randX * 0.25;
+      const moveY = (dy / (dist || 1)) * (70 * (0.35 + push)) + randY * 0.25;
+
+      // Convertit vers coordonnées relatives à arena
+      const currentLeft = parseFloat(getComputedStyle(noBtn).left) || (b.left - a.left);
+      const currentTop  = parseFloat(getComputedStyle(noBtn).top)  || (b.top - a.top);
+
+      let newLeft = currentLeft + moveX;
+      let newTop  = currentTop  + moveY;
+
+      // Anti-blocage: si on est trop proche d'un bord, on "rebondit" vers l'intérieur
+      const pad = isMobile ? 14 : 10;
+      const maxLeft = a.width  - b.width  - pad;
+      const maxTop  = a.height - b.height - pad;
+
+      // Si ça tape un bord, on repart un peu au centre
+      if (newLeft <= pad) newLeft = pad + (Math.random() * (a.width * 0.25));
+      if (newLeft >= maxLeft) newLeft = maxLeft - (Math.random() * (a.width * 0.25));
+      if (newTop <= pad) newTop = pad + (Math.random() * (a.height * 0.25));
+      if (newTop >= maxTop) newTop = maxTop - (Math.random() * (a.height * 0.25));
+
+      setNoPos(
+        clamp(newLeft, pad, maxLeft),
+        clamp(newTop,  pad, maxTop)
+      );
+    }
+  }
+
+  // Unifie mouse + touch (meilleur sur mobile)
+  arena.addEventListener("pointermove", (e) => {
+    dodge(e.clientX, e.clientY);
+  });
+
+  // Sur mobile, dès que le doigt se pose, ça commence à fuir
+  arena.addEventListener("pointerdown", (e) => {
+    dodge(e.clientX, e.clientY);
+  });
+
+  // Le bouton Non peut taquiner mais ne fait rien
+  noBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (accepted) return;
+
+    noBtn.textContent = "😳 Impossible";
+    setTimeout(() => {
+      noBtn.innerHTML = '<span class="icon">🙅‍♂️</span> Non';
+    }, 900);
+  });
+
+  // Oui => message final
+  yesBtn.addEventListener("click", () => {
+    if (accepted) return;
+    accepted = true;
+
+    result.style.display = "block";
+    result.textContent = "Yesss 😍 Merci ! Rendez-vous pour une soirée trop mignonne 💗";
+
+    // on masque la zone des boutons
+    arena.style.display = "none";
+
+    // petit effet confettis coeurs (simple)
+    burstHearts();
+  });
+
+  function burstHearts(){
+    const emojis = ["💖","💘","💗","💞","💝","💓"];
+    for (let i=0;i<18;i++){
+      const s = document.createElement("div");
+      s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      s.style.position="fixed";
+      s.style.left = (50 + (Math.random()-0.5)*30) + "vw";
+      s.style.top  = (55 + (Math.random()-0.5)*10) + "vh";
+      s.style.fontSize = (16 + Math.random()*22) + "px";
+      s.style.pointerEvents="none";
+      s.style.transition="transform 1.1s ease, opacity 1.1s ease";
+      document.body.appendChild(s);
+
+      requestAnimationFrame(() => {
+        const x = (Math.random()-0.5) * 500;
+        const y = - (200 + Math.random()*350);
+        s.style.transform = `translate(${x}px, ${y}px) rotate(${(Math.random()-0.5)*40}deg)`;
+        s.style.opacity = "0";
+      });
+
+      setTimeout(()=> s.remove(), 1200);
+    }
+  }
+
+  // Initialisation + recalcul si resize
+  initNoPos();
+  window.addEventListener("resize", initNoPos);
+})();
+</script>
+</body>
+</html>
